@@ -1,6 +1,5 @@
-openai 
+openai
 streamlit
 gspread
-oauth2client.service_account
+oauth2client
 pandas
-time
