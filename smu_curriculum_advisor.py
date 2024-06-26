@@ -163,7 +163,7 @@ if prompt and 'main_thread' in st.session_state:
     run = client.beta.threads.runs.create(
         thread_id=st.session_state.main_thread,
         assistant_id=assistant_id,
-        instructions="When planning lectures for each semester, check the information provided and plan appropriately for the school year semester. If you want to become a teacher, check the information provided for the completion of the teaching course and make a course plan. If you have a double major, check the CDRs of the two majors appropriately and establish a lecture plan."
+        #instructions="When planning lectures for each semester, check the information provided and plan appropriately for the school year semester. If you want to become a teacher, check the information provided for the completion of the teaching course and make a course plan. If you have a double major, check the CDRs of the two majors appropriately and establish a lecture plan."
     )
 
     # Check if the run is completed every 0.5 seconds
