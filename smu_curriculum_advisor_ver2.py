@@ -154,7 +154,7 @@ if prompt and 'main_thread' in st.session_state:
     run = client.beta.threads.runs.create(
         thread_id=st.session_state.main_thread,
         assistant_id=assistant_id,
-        instructions="제공된 자료를 검색해서 답변해",
+        #instructions="제공된 자료를 검색해서 답변해",
         tools=[{"type": "file_search"}]
         
     )
