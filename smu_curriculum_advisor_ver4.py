@@ -20,7 +20,17 @@ json_keyfile_dict = {
     "universe_domain": "googleapis.com"
 }
 
-assistant_id = "asst_QXNSrXVeEcfA8rHZNV9sXcgr"
+assistant_id_main = "asst_AT6JRezD693vhi3bKTFUIxKa"
+assistant_id_step = "asst_l1jlOZq0gpxNhKcoYhu5kSwg"
+assistant_id_CDR = "asst_QXNSrXVeEcfA8rHZNV9sXcgr"
+assistant_id_교과목 = "asst_QXNSrXVeEcfA8rHZNV9sXcgr"
+assistant_id_졸업 = "asst_d4uRu2nCmfWbH7b6xaDjauPk"
+
+google_api_key = st.secrets["google_api_key"]
+openai_api_key = st.secrets["openai_api_key"]
+
+
+
 
 if 'main_thread' not in st.session_state:
     st.session_state.main_thread = ""
@@ -32,8 +42,6 @@ st.caption("학습자의 진로와 흥미에 기반한 맞춤형 커리큘럼 �
 
 # Sidebar for API keys and student ID input
 with st.sidebar:
-    openai_api_key = st.text_input("OpenAI API KEY", key='chatbot_api_key', type="password")
-    google_api_key = st.text_input("Google API KEY", key='data_api_key', type="password")
     student_id = st.text_input("학번")
 
     start = st.button("대화 시작")
@@ -41,7 +49,7 @@ with st.sidebar:
     st.caption(f"thread: {st.session_state.main_thread if 'main_thread' in st.session_state else '없음'}")
 
     # Reset conversation button
-    reset = st.button('대화 리셋')
+    reset = st.button('새 대화')
     # Set API key
     client = OpenAI(api_key=openai_api_key)
 
@@ -75,7 +83,7 @@ with st.sidebar:
             default_message = client.beta.threads.messages.create(
                 thread_id=st.session_state.main_thread,
                 role="assistant",
-                content="안녕하세요! 상명대학교 커리큘럼 어드바이저입니다. 저는 여러분의 진로와 흥미에 기반한 맞춤형 커리큘럼을 추천해드립니다.😁"
+                content=f"안녕하세요! {student_id} 상명대학교 커리큘럼 어드바이저입니다. 저는 여러분의 진로와 흥미에 기반한 맞춤형 커리큘럼을 추천해드립니다. 학과와 학년을 먼저 입력해주세요😁"
             )
             thread_messages.data.append(default_message)
 
@@ -121,7 +129,7 @@ if reset:
             default_message = client.beta.threads.messages.create(
                 thread_id=st.session_state.main_thread,
                 role="assistant",
-                content=f"안녕하세요! {student_id} 상명대학교 커리큘럼 어드바이저입니다. 저는 여러분의 진로와 흥미에 기반한 맞춤형 커리큘럼을 추천해드립니다. 학과와 학년을 먼저 입력해주세요😁?"
+                content=f"안녕하세요! {student_id} 상명대학교 커리큘럼 어드바이저입니다. 저는 여러분의 진로와 흥미에 기반한 맞춤형 커리큘럼을 추천해드립니다. 학과와 학년을 먼저 입력해주세요😁"
             )
             thread_messages.data.append(default_message)
 
@@ -139,12 +147,6 @@ if start and 'main_thread' in st.session_state:
 # Input box to receive user input and generate a new message
 prompt = st.chat_input("물어보고 싶은 것을 입력하세요!")
 if prompt and 'main_thread' in st.session_state:
-    if not openai_api_key:
-        st.info('openai_api_key를 입력해주세요')
-        st.stop()
-    if not google_api_key:
-        st.info('google_api_key를 입력해주세요')
-        st.stop()
     if not student_id:
         st.info('학번을 입력해주세요')
         st.stop()
@@ -155,15 +157,13 @@ if prompt and 'main_thread' in st.session_state:
         content=prompt
     )
 
-    # Display the input message in the UI
-    with st.chat_message(message.role):
-        st.write(message.content[0].text.value)
 
     # Run the assistant
     run = client.beta.threads.runs.create(
         thread_id=st.session_state.main_thread,
-        assistant_id=assistant_id,
-        #instructions="When planning lectures for each semester, check the information provided and plan appropriately for the school year semester. If you want to become a teacher, check the information provided for the completion of the teaching course and make a course plan. If you have a double major, check the CDRs of the two majors appropriately and establish a lecture plan."
+        assistant_id=assistant_id_step,
+        
+        
     )
 
     # Check if the run is completed every 0.5 seconds
@@ -179,7 +179,121 @@ if prompt and 'main_thread' in st.session_state:
     messages = client.beta.threads.messages.list(
         thread_id=st.session_state.main_thread
     )
+
+    check_step = messages.data[0].content[0].text.value
+
+
+    print('step')
+    
+    
+    if '5' in check_step or '4' in check_step :
+        # Run the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=st.session_state.main_thread,
+            assistant_id=assistant_id_CDR,
+            #instructions="제공된 자료를 검색해서 답변해",
+            tools=[{"type": "file_search"}]
+            
+        )
+
+        # Check if the run is completed every 0.5 seconds
+        while run.status != "completed":
+            print("status 확인 중", run.status)
+            time.sleep(0.5)
+            run = client.beta.threads.runs.retrieve(
+                thread_id=st.session_state.main_thread,
+                run_id=run.id
+            )
+
+        
+        print('5')
+
+
+    elif '6' in check_step :
+        # Run the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=st.session_state.main_thread,
+            assistant_id=assistant_id_교과목,
+            #instructions="제공된 자료를 검색해서 답변해",
+            tools=[{"type": "file_search"}]
+            
+        )
+
+        # Check if the run is completed every 0.5 seconds
+        while run.status != "completed":
+            print("status 확인 중", run.status)
+            time.sleep(0.5)
+            run = client.beta.threads.runs.retrieve(
+                thread_id=st.session_state.main_thread,
+                run_id=run.id
+            )
+
+                # Retrieve and display the last message
+        messages = client.beta.threads.messages.list(
+            thread_id=st.session_state.main_thread
+        )
+        
+
+    elif '7' in check_step :
+        # Run the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=st.session_state.main_thread,
+            assistant_id=assistant_id_졸업,
+            #instructions="제공된 자료를 검색해서 답변해",
+            tools=[{"type": "file_search"}]
+            
+        )
+
+        # Check if the run is completed every 0.5 seconds
+        while run.status != "completed":
+            print("status 확인 중", run.status)
+            time.sleep(0.5)
+            run = client.beta.threads.runs.retrieve(
+                thread_id=st.session_state.main_thread,
+                run_id=run.id
+            )
+
+                # Retrieve and display the last message
+        messages = client.beta.threads.messages.list(
+            thread_id=st.session_state.main_thread
+        )
+        
+        
+        print('7')
+
+
+    else:
+            # Run the assistant
+        run = client.beta.threads.runs.create(
+            thread_id=st.session_state.main_thread,
+            assistant_id=assistant_id_main,
+            #instructions="제공된 자료를 검색해서 답변해",
+            tools=[{"type": "file_search"}]
+            
+        )
+
+        # Check if the run is completed every 0.5 seconds
+        while run.status != "completed":
+            print("status 확인 중", run.status)
+            time.sleep(0.5)
+            run = client.beta.threads.runs.retrieve(
+                thread_id=st.session_state.main_thread,
+                run_id=run.id
+            )
+        
+
+        
+        print('1')
+
+    # Retrieve and display the last message
+    messages = client.beta.threads.messages.list(
+        thread_id=st.session_state.main_thread
+    )
+
     # Display all messages in reverse order
     for msg in reversed(messages.data):
         with st.chat_message(msg.role):
             st.write(msg.content[0].text.value)
+
+    
+    
