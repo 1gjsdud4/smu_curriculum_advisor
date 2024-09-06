@@ -71,6 +71,8 @@ def upload_data_to_spreadsheet(name, student_id, thread_id, plan, conversation):
     worksheet.update_cell(cell.row, 4, plan_json)
     worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
 
+    st.rerun()
+
 
 
 
@@ -172,7 +174,7 @@ with st.sidebar:
                 "content": default_content
             })
             upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-            st.rerun()
+        
 
 
 # 대화를 저장할 리스트가 있는지 확인하고, 없으면 초기화
@@ -240,7 +242,7 @@ with col2.container(height=650):
                         "content": default_content
                     })
                     upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    st.rerun()
+            
         
 
     
@@ -349,7 +351,7 @@ with col2.container(height=650):
                         st.success("변경 사항이 적용되었습니다.")
 
                         upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                        st.rerun()
+    
 
                     
                 except json.JSONDecodeError:
@@ -406,7 +408,7 @@ with col1.container(height=650):
                 if st.button("➖", key=f"remove_job_{job}"):
                     st.session_state.plan['hope_job'].remove(job)
                     upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    st.rerun()
+        
         
     else:
         st.write("희망 직업이 없습니다.")
@@ -423,7 +425,7 @@ with col1.container(height=650):
             if new_skill_input and new_skill_input not in st.session_state.plan['skill']:
                 st.session_state.plan['skill'].append(new_skill_input)
                 upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                st.rerun()
+    
 
     # 스킬 리스트와 제거 버튼
     if st.session_state.plan['skill']:
@@ -435,7 +437,7 @@ with col1.container(height=650):
                 if st.button("➖", key=f"remove_skill_{skill}"):
                     st.session_state.plan['skill'].remove(skill)
                     upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    st.rerun()
+        
                 
     else:
         st.write("보유 스킬이 없습니다.")
@@ -462,7 +464,7 @@ with col1.container(height=650):
                 if st.button("➖", key=f"remove_{semester}_{course_code}"):  # '-' 아이콘으로 오른쪽에 배치
                     st.session_state.plan['curriculum'][semester].remove(course_code)
                     upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    st.rerun()
+    
             
                     
 
@@ -502,5 +504,5 @@ with col1.container(height=650):
             if selected_course_code not in st.session_state.plan['curriculum'][selected_semester]:
                 st.session_state.plan['curriculum'][selected_semester].append(selected_course_code)
                 upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                st.rerun()
+
  # 페이지를 다시 로드하여 변경사항 반영
