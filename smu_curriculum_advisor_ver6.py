@@ -173,30 +173,8 @@ with st.sidebar:
                 "role": "assistant",
                 "content": default_content
             })
-            #upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-            # Google 스프레드시트에 업로드할 데이터를 JSON 문자열로 변환
-            json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-            credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-            gc = gspread.authorize(credentials)
-            sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-            doc = gc.open_by_url(sheet_url)
-            worksheet = doc.worksheet('시트1')
-            plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-            conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-            # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
+            upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
             
-            # 학번을 찾아 해당 위치의 셀 가져오기
-            cell = worksheet.find(student_id)
-
-            # 학번이 있는 행에 데이터를 치환
-            worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-            worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-            worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-            worksheet.update_cell(cell.row, 4, plan_json)
-            worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-            st.rerun()
-        
 
 
 # 대화를 저장할 리스트가 있는지 확인하고, 없으면 초기화
@@ -263,28 +241,8 @@ with col2.container(height=650):
                         "role": "assistant",
                         "content": default_content
                     })
-
-                    json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                    credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                    gc = gspread.authorize(credentials)
-                    sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                    doc = gc.open_by_url(sheet_url)
-                    worksheet = doc.worksheet('시트1')
-                    plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                    conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                    # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                    
-                    # 학번을 찾아 해당 위치의 셀 가져오기
-                    cell = worksheet.find(student_id)
-
-                    # 학번이 있는 행에 데이터를 치환
-                    worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                    worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                    worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                    worksheet.update_cell(cell.row, 4, plan_json)
-                    worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                    st.rerun()                    
+                    upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+            
         
 
     
@@ -392,27 +350,8 @@ with col2.container(height=650):
                         
                         st.success("변경 사항이 적용되었습니다.")
 
-                        json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                        credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                        gc = gspread.authorize(credentials)
-                        sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                        doc = gc.open_by_url(sheet_url)
-                        worksheet = doc.worksheet('시트1')
-                        plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                        conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                        # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                        
-                        # 학번을 찾아 해당 위치의 셀 가져오기
-                        cell = worksheet.find(student_id)
-
-                        # 학번이 있는 행에 데이터를 치환
-                        worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                        worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                        worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                        worksheet.update_cell(cell.row, 4, plan_json)
-                        worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                        st.rerun()
+                        upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+    
 
                     
                 except json.JSONDecodeError:
@@ -457,27 +396,8 @@ with col1.container(height=650):
         if st.button("➕", key="add_hope_job_button"):
             if hope_job_input and hope_job_input not in st.session_state.plan['hope_job']:
                 st.session_state.plan['hope_job'].append(hope_job_input)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
+                upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
 
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
     # 희망 직업 리스트와 제거 버튼
     if st.session_state.plan['hope_job']:
         for job in st.session_state.plan['hope_job']:
@@ -487,27 +407,8 @@ with col1.container(height=650):
             with col_button:
                 if st.button("➖", key=f"remove_job_{job}"):
                     st.session_state.plan['hope_job'].remove(job)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
-
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
+                    upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+        
         
     else:
         st.write("희망 직업이 없습니다.")
@@ -523,27 +424,8 @@ with col1.container(height=650):
         if st.button("➕", key="add_skill_button"):
             if new_skill_input and new_skill_input not in st.session_state.plan['skill']:
                 st.session_state.plan['skill'].append(new_skill_input)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
-
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
+                upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+    
 
     # 스킬 리스트와 제거 버튼
     if st.session_state.plan['skill']:
@@ -554,27 +436,8 @@ with col1.container(height=650):
             with col_button:
                 if st.button("➖", key=f"remove_skill_{skill}"):
                     st.session_state.plan['skill'].remove(skill)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
-
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
+                    upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+                    st.rerun()
                 
     else:
         st.write("보유 스킬이 없습니다.")
@@ -600,27 +463,8 @@ with col1.container(height=650):
             with col_button:
                 if st.button("➖", key=f"remove_{semester}_{course_code}"):  # '-' 아이콘으로 오른쪽에 배치
                     st.session_state.plan['curriculum'][semester].remove(course_code)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-                
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
-
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
+                    upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+                    
             
                     
 
@@ -659,25 +503,6 @@ with col1.container(height=650):
         if st.button("과목 추가"):
             if selected_course_code not in st.session_state.plan['curriculum'][selected_semester]:
                 st.session_state.plan['curriculum'][selected_semester].append(selected_course_code)
-                json_keyfile_dict["private_key"] = f"-----BEGIN PRIVATE KEY-----\n{google_api_key}\nnxoTuVtIiP953QNl84NkqkpdBxfiwM66xgddCKMVRpB2WQx4WC6iY29qvZqLK5Ml\nMv+Vfpcf38hDiwNPMueN7ISoYxDBhUgR+7j9kcYuJD4WmDFPScJLlvmuoVjMvI7C\n/s9sfyYKdNHhQPd0G30aB5jqW7vDkp7EOTilOmHkizO5XPE6oIt4sCE6wSzpiLsx\nC8dji9zIoWZFoZ11D3tkPXlzrVtoFqYKyz3SSH7KmD2G5vOQuTyNXN9Y/rRrnRyt\ntaAa8t7KQ7ldbp//oLtDLndNEwRFmMAOk5JBgr/eXQ0on+bOC+sKvZdd6HJQwgMD\nsNk2hKIDAgMBAAECggEAD7HIZ4hm1sNvahEbBpq1447qXDMpAW7fLJ385suajpXi\nsJk9I7l9sk5FjrTvJBzTu+2hruGv1rc0e4JF5xWcocOA9qojHJwe2g9lPFy9kVaF\nYKAyhLD9ieT6/M5gwfRURdn8bMU+9W4fj4cpwb4XkiWkmkixS8SnRCN1rx6+f8IT\n7g+NeUVHxK/Pa/Ir3TBCXTR2ifJxy5Be5IeGn1GuF2R6jnusinUdGIerJNYlDP7+\nIwAZv7dJlBAA61HJCe9S+Yj9qhSBEzOY7ZP/PFC1CI99RIwotBPv/1j608L9C73U\nP9/tVjCUEPYPeuNFhId+H41sOIY+lM/NxxmPo2mHUQKBgQDiAa2QZduWl7o6HgN8\ncIZCkPcZ1P24OCunr3iYil4/Ul1RdPlAd1sVv10C72iu4SyuzVwT9c+P2SSnJ3Uu\nwl+N22rDGjHz/vNSOB/cwMSfG7us8AY4tT2Do5zKA4NcTLuPRJgW1L+GuPP+MBMm\nPSJjc1Ihi879h6O8kr4V+8CIFQKBgQDbFJkoi30q542sHaGsRpUnz85qKGNJqBzv\nEfhQgSqorLstm7G/w8M+w+/6ri7TFD8FGqq5CJ0SNjaYz/VEAEzuGaMzr2+AB4pN\nVtQD17p1iSaf6/FxAM0ePZvHDcg6X73mq4zl5r/XWeAJDWfb0m2XCq9YpsCiwU0i\nMpe+2amvtwKBgC1FuMbcIIiiDCPoLzqWL87VyynZiJmGZvhIJhgoX4i/rwHKNMO9\nJPnOQ4t6+bVOVe0OJgu5icJ+9OCm/spHFW0NLu22KZt+zq8BnyBRXRGiNI4H5rcl\nVxUviRDOc1nh5RBl5TFtnJAYLIgWiT93r5PMXf9qSiRvL1Vu77TnoUGhAoGBANPW\nJQqJZmx4HgtRU6ULUup+C6+mgesU/XVFwP/HBgK3kv5U0BkHJ+GnAIM6rdg4eX9r\n+6yTYZ3cggpc+2HXkIuiiqZNetkncVm7HaLhlFBWX9y+/mUwSyZ0mA5viy62qR9E\nvicHanTHWNQn/EcYQBOOp2JnS1mU5AqvNP+75FIdAoGAKZRjd/wWZy4/CYSwICmx\n9mPS55ySeQ6BF4NLK6R5fTt/OQjXjbyR3EPqgBl/eaejDGlO8YG4EJ6FxBx86aBI\nzxo5G9f/5Zs2Bs5xSvyR87Ekg8+zhDjeTwE5Ir/6ZcgwRkrQkPmmAujDeSF8lwas\n3KHdDQ9AKL9OOyjDFrFC+Q0=\n-----END PRIVATE KEY-----\n"
-                credentials = ServiceAccountCredentials.from_json_keyfile_dict(json_keyfile_dict, scope)
-                gc = gspread.authorize(credentials)
-                sheet_url = 'https://docs.google.com/spreadsheets/d/1Mw6ONEIrFJHum-TRsEVPFXr3CU6G-VxauGbzMA8n8_0/edit?gid=0#gid=0'
-                doc = gc.open_by_url(sheet_url)
-                worksheet = doc.worksheet('시트1')
-                plan_json = json.dumps(st.session_state.plan, ensure_ascii=False) 
-                conversation_json = json.dumps(st.session_state.conversation_history,ensure_ascii=False)
-                # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
+                upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
                 
-                # 학번을 찾아 해당 위치의 셀 가져오기
-                cell = worksheet.find(student_id)
-
-                # 학번이 있는 행에 데이터를 치환
-                worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-                worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-                worksheet.update_cell(cell.row, 3, st.session_state.main_thread)  # thread_id 업데이트
-                worksheet.update_cell(cell.row, 4, plan_json)
-                worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
-
-                st.rerun()
  # 페이지를 다시 로드하여 변경사항 반영
