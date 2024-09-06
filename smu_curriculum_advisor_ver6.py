@@ -60,22 +60,19 @@ def upload_data_to_spreadsheet(name, student_id, thread_id, plan, conversation):
     plan_json = json.dumps(plan, ensure_ascii=False) 
     conversation_json = json.dumps(conversation,ensure_ascii=False)
     # 해당 학번의 행을 찾아 데이터를 치환하거나 새로 추가
-    try:
-        # 학번을 찾아 해당 위치의 셀 가져오기
-        cell = worksheet.find(student_id)
+    
+    # 학번을 찾아 해당 위치의 셀 가져오기
+    cell = worksheet.find(student_id)
 
-        # 학번이 있는 행에 데이터를 치환
-        worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
-        worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
-        worksheet.update_cell(cell.row, 3, thread_id)  # thread_id 업데이트
-        worksheet.update_cell(cell.row, 4, plan_json)
-        worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
+    # 학번이 있는 행에 데이터를 치환
+    worksheet.update_cell(cell.row, 1, name)  # 이름 업데이트
+    worksheet.update_cell(cell.row, 2, student_id)  # 학번 업데이트
+    worksheet.update_cell(cell.row, 3, thread_id)  # thread_id 업데이트
+    worksheet.update_cell(cell.row, 4, plan_json)
+    worksheet.update_cell(cell.row, 5, conversation_json)  # plan JSON 업데이트
 
 
-    except gspread.exceptions.CellNotFound:
-        # 학번이 없는 경우 새 행 추가
-        new_data = [name, student_id, thread_id, plan_json]
-        worksheet.append_row(new_data)
+
 
 
 # 프롬프트를 st.session_state.plan 데이터와 결합하여 JSON 형태로 만드는 함수
