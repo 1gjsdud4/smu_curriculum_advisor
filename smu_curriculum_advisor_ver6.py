@@ -335,27 +335,25 @@ with col2.container(height=650):
                 print(plan_assistant)
 
             if plan_assistant:
-                try:
-                    # JSON 파싱
-                    response_data = json.loads(plan_assistant)
+            
+                # JSON 파싱
+                response_data = json.loads(plan_assistant)
+                
+                # "change" 값이 1인지 확인
+                if int(response_data.get("change")) == 1:
+                    # 나머지 데이터를 st.session_state.plan에 저장
+                    st.session_state.plan["name"] = response_data.get("name", "")
+                    st.session_state.plan["student_id"] = response_data.get("student_id", "")
+                    st.session_state.plan["hope_job"] = response_data.get("hope_job", [])
+                    st.session_state.plan["skill"] = response_data.get("skill", [])
+                    st.session_state.plan["curriculum"] = response_data.get("curriculum", {})
                     
-                    # "change" 값이 1인지 확인
-                    if int(response_data.get("change")) == 1:
-                        # 나머지 데이터를 st.session_state.plan에 저장
-                        st.session_state.plan["name"] = response_data.get("name", "")
-                        st.session_state.plan["student_id"] = response_data.get("student_id", "")
-                        st.session_state.plan["hope_job"] = response_data.get("hope_job", [])
-                        st.session_state.plan["skill"] = response_data.get("skill", [])
-                        st.session_state.plan["curriculum"] = response_data.get("curriculum", {})
-                        
-                        st.success("변경 사항이 적용되었습니다.")
+                    st.success("변경 사항이 적용되었습니다.")
 
-                        upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-    
+                upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+
 
                     
-                except json.JSONDecodeError:
-                    st.error("응답 데이터를 처리하는 중 오류가 발생했습니다.")
         
 
 ############## 학습경로 설계 ######################
