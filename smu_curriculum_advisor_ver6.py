@@ -380,92 +380,93 @@ course_options = [f"{row['교과목명']} ({row['학수번호']})" for index, ro
 
 
 # 수강 계획 대시보드 UI 구성
-with col1.container(height=650):
-    st.header("대학교 강의 수강 계획")
+with col1.container():
+    with st.container(height =600):
+        st.header("대학교 강의 수강 계획")
 
-    # 희망 직업 입력 및 삭제
-    col_hope_job, col_input, col_add_button = st.columns([2, 6, 1])
-    
-    with col_hope_job:
-        st.subheader("희망 직업")
-    with col_input:
-        hope_job_input = st.text_input("새로운 희망 직업을 입력하세요", value="", label_visibility="collapsed", key="hope_job_input")
-    with col_add_button:
-        if st.button("➕", key="add_hope_job_button"):
-            if hope_job_input and hope_job_input not in st.session_state.plan['hope_job']:
-                st.session_state.plan['hope_job'].append(hope_job_input)
-                upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-
-    # 희망 직업 리스트와 제거 버튼
-    if st.session_state.plan['hope_job']:
-        for job in st.session_state.plan['hope_job']:
-            col_job, col_button = st.columns([4, 0.5])
-            with col_job:
-                st.write(job)
-            with col_button:
-                if st.button("➖", key=f"remove_job_{job}"):
-                    st.session_state.plan['hope_job'].remove(job)
-                    upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+        # 희망 직업 입력 및 삭제
+        col_hope_job, col_input, col_add_button = st.columns([2, 6, 1])
         
-        
-    else:
-        st.write("희망 직업이 없습니다.")
-
-    # 스킬 입력 및 삭제
-    col_skill, col_skill_input, col_skill_button = st.columns([2, 6, 1])
-    
-    with col_skill:
-        st.subheader("역량")
-    with col_skill_input:
-        new_skill_input = st.text_input("새로운 역량을 입력하세요", value="", label_visibility="collapsed", key="new_skill_input")
-    with col_skill_button:
-        if st.button("➕", key="add_skill_button"):
-            if new_skill_input and new_skill_input not in st.session_state.plan['skill']:
-                st.session_state.plan['skill'].append(new_skill_input)
-                upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-    
-
-    # 스킬 리스트와 제거 버튼
-    if st.session_state.plan['skill']:
-        for skill in st.session_state.plan['skill']:
-            col_skill, col_button = st.columns([4, 0.5])
-            with col_skill:
-                st.write(skill)
-            with col_button:
-                if st.button("➖", key=f"remove_skill_{skill}"):
-                    st.session_state.plan['skill'].remove(skill)
+        with col_hope_job:
+            st.subheader("희망 직업")
+        with col_input:
+            hope_job_input = st.text_input("새로운 희망 직업을 입력하세요", value="", label_visibility="collapsed", key="hope_job_input")
+        with col_add_button:
+            if st.button("➕", key="add_hope_job_button"):
+                if hope_job_input and hope_job_input not in st.session_state.plan['hope_job']:
+                    st.session_state.plan['hope_job'].append(hope_job_input)
                     upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    st.rerun()
-                
-    else:
-        st.write("보유 스킬이 없습니다.")
-    # 학기별 수강 계획 표시
-    for semester, courses in st.session_state.plan['curriculum'].items():
-        st.subheader(semester)
-        for course_code in courses:
-            course_info = df[df['학수번호'] == course_code]
-            if not course_info.empty:
-                course_name = course_info['교과목명'].values[0]
-                display_name = f"{course_name} ({course_code})"
-            else:
-                display_name = course_code  # 학수번호만 표시
-                course_info = None
 
-            col_course, col_button = st.columns([4, 0.5])
-            with col_course:
-                if course_info is not None:
-                    with st.expander(display_name):  
-                        st.write(course_info.to_dict('records')[0])  # 모든 세부 정보 출력
-                else:
-                    st.write(display_name)
-            with col_button:
-                if st.button("➖", key=f"remove_{semester}_{course_code}"):  # '-' 아이콘으로 오른쪽에 배치
-                    st.session_state.plan['curriculum'][semester].remove(course_code)
-                    upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
-                    
+        # 희망 직업 리스트와 제거 버튼
+        if st.session_state.plan['hope_job']:
+            for job in st.session_state.plan['hope_job']:
+                col_job, col_button = st.columns([4, 0.5])
+                with col_job:
+                    st.write(job)
+                with col_button:
+                    if st.button("➖", key=f"remove_job_{job}"):
+                        st.session_state.plan['hope_job'].remove(job)
+                        upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
             
-                    
+            
+        else:
+            st.write("희망 직업이 없습니다.")
 
+        # 스킬 입력 및 삭제
+        col_skill, col_skill_input, col_skill_button = st.columns([2, 6, 1])
+        
+        with col_skill:
+            st.subheader("역량")
+        with col_skill_input:
+            new_skill_input = st.text_input("새로운 역량을 입력하세요", value="", label_visibility="collapsed", key="new_skill_input")
+        with col_skill_button:
+            if st.button("➕", key="add_skill_button"):
+                if new_skill_input and new_skill_input not in st.session_state.plan['skill']:
+                    st.session_state.plan['skill'].append(new_skill_input)
+                    upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+        
+
+        # 스킬 리스트와 제거 버튼
+        if st.session_state.plan['skill']:
+            for skill in st.session_state.plan['skill']:
+                col_skill, col_button = st.columns([4, 0.5])
+                with col_skill:
+                    st.write(skill)
+                with col_button:
+                    if st.button("➖", key=f"remove_skill_{skill}"):
+                        st.session_state.plan['skill'].remove(skill)
+                        upload_data_to_spreadsheet(name, student_id, st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+                        st.rerun()
+                    
+        else:
+            st.write("보유 스킬이 없습니다.")
+        # 학기별 수강 계획 표시
+        for semester, courses in st.session_state.plan['curriculum'].items():
+            st.subheader(semester)
+            for course_code in courses:
+                course_info = df[df['학수번호'] == course_code]
+                if not course_info.empty:
+                    course_name = course_info['교과목명'].values[0]
+                    display_name = f"{course_name} ({course_code})"
+                else:
+                    display_name = course_code  # 학수번호만 표시
+                    course_info = None
+
+                col_course, col_button = st.columns([4, 0.5])
+                with col_course:
+                    if course_info is not None:
+                        with st.expander(display_name):  
+                            st.write(course_info.to_dict('records')[0])  # 모든 세부 정보 출력
+                    else:
+                        st.write(display_name)
+                with col_button:
+                    if st.button("➖", key=f"remove_{semester}_{course_code}"):  # '-' 아이콘으로 오른쪽에 배치
+                        st.session_state.plan['curriculum'][semester].remove(course_code)
+                        upload_data_to_spreadsheet(name,student_id,st.session_state.main_thread, st.session_state.plan, st.session_state.conversation_history)
+                        
+                
+                        
+    
     with st.expander('과목추가'):
 
         # 학과 선택
